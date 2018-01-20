@@ -12,9 +12,11 @@ public class Game {
 				else if (i == 5 && j == 4 || i == 4 && j == 5) board[i][j] ="Åõ";
 				else if (i == 4 && j == 4 || i == 5 && j == 5) board[i][j] = "Åú";
 				else if (i != 0) board[i][j] = "Å†";
+				if (i == 9) board[i][j] = "";
 			}
 		}
 		printState(board);
+		checkState(board, "black");
 	}
 	
 	public void printState(String[][] board) {
@@ -24,6 +26,48 @@ public class Game {
 				System.out.print(board[i][j]);
 			}
 		}
+	}
+	
+	public void checkState(String[][] board, String turn) {
+		// check the practicable points 
+		for (int i=1; i<9; i++) {
+			for (int j=1; j<9; j++) {
+				if (board[i][j] == "Å†" && 
+						checkPracticable(board, i, j, turn)) board[i][j] = "Å~";
+			}
+		}
+		printState(board);
+	}
+	
+	public boolean checkPracticable(String[][] board, int i, int j, String turn) {
+		// check whether this point is practicable
+		if (turn == "black") {
+			for (int m=-1; m<2; m++) {
+				for (int n=-1; n<2; n++) {
+					if (board[i+m][j+n] == "Åõ") {
+						int k = 1;
+						while (board[i+k*m][j+k*n] == "Åõ") {
+							k++;
+							if (board[i+k*m][j+k*n] == "Åú") return true;
+						}
+					}
+				}
+			}
+		}
+		else {
+			for (int m=-1; m<2; m++) {
+				for (int n=-1; n<2; n++) {
+					if (board[i+m][j+n] == "Åú") {
+						int k = 2;
+						while (board[i+k*m][j+k*n] == "Åú") {
+							if (board[i+k*m][j+k*n] == "Åõ") return true;
+							k++;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 	
 }
