@@ -3,6 +3,7 @@ package othello;
 public class Game {
 	public void initial() {
 		String[][] board = new String[10][10];
+		Panel newPanel = new Panel();
 		// create the board
 		for (int i=0; i<10; i++) {
 			for (int j=0; j<10; j++) {
@@ -18,6 +19,8 @@ public class Game {
 		printState(board);
 		checkState(board, "black");
 		String state = blackWin(board);
+    	newPanel.setPanel();
+    	newPanel.refreshBoard(board);
 	}
 	
 	public String blackWin(String[][] board) {
