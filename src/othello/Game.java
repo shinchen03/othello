@@ -17,6 +17,30 @@ public class Game {
 		}
 		printState(board);
 		checkState(board, "black");
+		String state = blackWin(board);
+		System.out.println(state);
+	}
+	
+	public String blackWin(String[][] board) {
+		int black = 0;
+		int white = 0;
+		int pass = 1;
+		int win = 1;
+		for (int i=1; i<9; i++) {
+			for (int j=1; j<9; j++) {
+				if (board[i][j] == "›") white++;
+				if (board[i][j] == "œ") black++;
+				if (board[i][j] == "~") pass = 0;
+				if (board[i][j] == " ") win = 0;
+			}
+		}
+		if (win == 1) {
+			if (black > white) return "Black Win !!";
+			if (black == white) return "draw";
+			else return "White Win";
+		}
+		if (pass == 1) return "pass";
+		return "continue";
 	}
 	
 	public void printState(String[][] board) {
