@@ -18,7 +18,6 @@ public class Game {
 		printState(board);
 		checkState(board, "black");
 		String state = blackWin(board);
-		System.out.println(state);
 	}
 	
 	public String blackWin(String[][] board) {
