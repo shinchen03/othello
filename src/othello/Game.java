@@ -1,9 +1,17 @@
 package othello;
 
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 public class Game {
+	
+	private String turn = "black";
+	private String state = "continue";
 	public void initial() {
 		String[][] board = new String[10][10];
 		Panel newPanel = new Panel();
+		
 		// create the board
 		for (int i=0; i<10; i++) {
 			for (int j=0; j<10; j++) {
@@ -17,10 +25,71 @@ public class Game {
 			}
 		}
 		printState(board);
-		checkState(board, "black");
-		String state = blackWin(board);
+		checkState(board);
     	newPanel.setPanel();
     	newPanel.refreshBoard(board);
+    	newPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {           
+                //get the coordinate of x and y
+                int x = e.getX(), y = e.getY();
+                Point location = newPanel.getCoordinate(x, y);
+                playGame(location.x, location.y, board);
+                newPanel.refreshBoard(board);
+                state = blackWin(board);
+                if (state != "continue" && state != "pass") System.out.println("Over");
+            }
+        });
+	}
+	
+	public void playGame(int x, int y, String[][] board) {
+		if (state == "continue") {
+		if (board[x][y] != "Å~") System.out.println("ÇªÇ±Ç…ãÓÇÕíuÇØÇ‹ÇπÇÒ");
+		else {
+			if (turn == "black") {
+				board[x][y] = "Åú";
+				for (int i=-1; i<2; i++) {
+					for (int j=-1; j<2; j++) {
+						if (board[x+i][y+j] == "Åõ") {
+							int k = 1;
+							while (board[x+i*k][y+j*k] == "Åõ") {
+								k++;
+								if (board[x+i*k][y+j*k] == "Åú") {
+									while (k>1) {
+										k--;
+										board[x+i*k][y+j*k] = "Åú";
+									}
+								}
+							}
+						}
+					}
+				}
+				turn = "white";
+			}
+			else if (turn == "white") {
+				board[x][y] = "Åõ";
+				for (int i=-1; i<2; i++) {
+					for (int j=-1; j<2; j++) {
+						if (board[x+i][y+j] == "Åú") {
+							int k = 1;
+							while (board[x+i*k][y+j*k] == "Åú") {
+								k++;
+								if (board[x+i*k][y+j*k] == "Åõ") {
+									while (k>1) {
+										k--;
+										board[x+i*k][y+j*k] = "Åõ";
+									}
+								}
+							}
+						}
+					}
+				}
+				turn = "black";
+			}
+		}
+		checkState(board);
+		printState(board);
+		}
 	}
 	
 	public String blackWin(String[][] board) {
@@ -33,7 +102,7 @@ public class Game {
 				if (board[i][j] == "Åõ") white++;
 				if (board[i][j] == "Åú") black++;
 				if (board[i][j] == "Å~") pass = 0;
-				if (board[i][j] == "Å†") win = 0;
+				if (board[i][j] == "Å†" || board[i][j] == "Å~") win = 0;
 			}
 		}
 		if (win == 1) {
@@ -41,7 +110,11 @@ public class Game {
 			if (black == white) return "draw";
 			else return "White Win";
 		}
-		if (pass == 1) return "pass";
+		if (pass == 1) {
+			if(turn == "white") turn = "black";
+			else if(turn == "black") turn = "white";
+			return "pass";
+		}
 		return "continue";
 	}
 	
@@ -54,8 +127,13 @@ public class Game {
 		}
 	}
 	
-	public void checkState(String[][] board, String turn) {
+	public void checkState(String[][] board) {
 		// check the practicable points 
+		for (int i=1; i<9; i++) {
+			for (int j=1; j<9; j++) {
+				if (board[i][j] == "Å~") board[i][j] = "Å†";
+			}
+		}
 		for (int i=1; i<9; i++) {
 			for (int j=1; j<9; j++) {
 				if (board[i][j] == "Å†" && 
@@ -84,10 +162,10 @@ public class Game {
 			for (int m=-1; m<2; m++) {
 				for (int n=-1; n<2; n++) {
 					if (board[i+m][j+n] == "Åú") {
-						int k = 2;
+						int k = 1;
 						while (board[i+k*m][j+k*n] == "Åú") {
-							if (board[i+k*m][j+k*n] == "Åõ") return true;
 							k++;
+							if (board[i+k*m][j+k*n] == "Åõ") return true;
 						}
 					}
 				}

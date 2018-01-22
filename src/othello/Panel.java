@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -16,9 +18,9 @@ public class Panel extends JFrame{
 	
 	private static final int sx = 100;
     private static final int sy = 100;
-    private static final int w = 80;
+    private static final int w = 100;
     private static final int rw = 800;
-    private static final int r = 72;
+    private static final int r = 92;
     private static final int rr = 10;
     private Graphics jg;
     private Color rectColor = new Color(0x008000);
@@ -47,6 +49,18 @@ public class Panel extends JFrame{
         
         // 绘制游戏区域
         paintComponents(jg);
+
+        
+//        this.addMouseListener(new MouseAdapter() {
+//            
+//            // 定义鼠标点击事件响应过程
+//            @Override
+//            public void mouseClicked(MouseEvent e) {           
+//                //获取鼠标点击的那一点的x，y坐标
+//                int x = e.getX(), y = e.getY();
+//                
+//            }
+//        });
 	}
 	
 	public void paintComponents(Graphics g) {
@@ -64,7 +78,7 @@ public class Panel extends JFrame{
              * 外围四周4条线已经画过了，不需要再画。
              * 同时内部64个方格填写数字。
              */
-            for(int i = 1; i < 10; i ++) {
+            for(int i = 1; i < 8; i ++) {
             	g2.setStroke(new BasicStroke(5));
                 // 绘制第i条竖直线
                 g2.drawLine(sx + (i * w), sy, sx + (i * w), sy + rw);
@@ -73,7 +87,7 @@ public class Panel extends JFrame{
                 g2.drawLine(sx, sy + (i * w), sx + rw, sy + (i * w));
                 
                 // 填写第i行从第1个方格到第8个方格里面的数字（方格序号从0开始）
-                for(int j = 0; j < 10; j ++) {
+                for(int j = 0; j < 8; j ++) {
                     //drawString(g, j, i);                    
                 }
             }
@@ -88,17 +102,26 @@ public class Panel extends JFrame{
 			for (int j=1; j<9; j++) {
 				if (board[i][j] == "●") {
 					g2.setColor(Color.BLACK);
-					g2.fillOval(sx + (i * w) + 4, sy + (j * w) + 4, r, r);
+					g2.fillOval(sx + (i-1) * w + 4, sy + (j-1) * w + 4, r, r);
 				}
 				if (board[i][j] == "○") {
 					g2.setColor(Color.WHITE);
-					g2.fillOval(sx + (i * w) + 4, sy + (j * w) + 4, r, r);
+					g2.fillOval(sx + (i-1) * w + 4, sy + (j-1) * w + 4, r, r);
 				}
 				if (board[i][j] == "×") {
-					g2.setColor(Color.WHITE);
-					g2.fillOval(sx + (i * w) + w/2 -5, sy + (j * w) + w/2 -5, rr, rr);
+					// g2.setColor(Color.WHITE);
+					// g2.fillOval(sx + (i * w) + w/2 -5, sy + (j * w) + w/2 -5, rr, rr);
 				}
 			}
 		}
+	}
+	
+	public Point getCoordinate(int x, int y) {
+		// get the coordinate from mouse click event
+	    Point location = new Point();
+		int cx = (x - sx) / w + 1, cy = (y - sy) / w + 1;
+		if(cx < 1 || cy < 1 || cx > 8 || cy > 8) return location;
+		else location = new Point(cx, cy);
+		return location;
 	}
 }
